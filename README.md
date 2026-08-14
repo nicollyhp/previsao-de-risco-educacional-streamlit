@@ -1,144 +1,213 @@
-# 📘 Previsão de Risco Educacional – Associação Passos Mágicos
+# 🎓 Análise Preditiva de Risco Educacional
 
-Aplicação desenvolvida em **Python** com interface em **Streamlit**, voltada à **identificação precoce de alunos em risco de defasagem educacional**, utilizando técnicas de **Machine Learning** aliadas a **regras pedagógicas preventivas**.
+Aplicação desenvolvida em **Python** e **Streamlit** para apoiar a **identificação precoce de alunos em risco de defasagem educacional**, utilizando técnicas de **Machine Learning** combinadas a **regras pedagógicas preventivas**.
 
----
+O projeto foi desenvolvido no contexto do **Datathon da Associação Passos Mágicos**, com foco na utilização de dados educacionais para apoiar a tomada de decisão e possibilitar intervenções pedagógicas preventivas.
 
-## 🔗 Aplicação online
-
-https://previsao-de-risco-educacional.streamlit.app/
+🔗 **[Acessar aplicação online](https://previsao-de-risco-educacional.streamlit.app/)**
 
 ---
 
-## 1. Introdução
+## 🎯 Objetivo do Projeto
 
-A defasagem educacional é um fenômeno multifatorial, influenciado por aspectos acadêmicos, comportamentais e psicossociais. A identificação tardia desses fatores dificulta intervenções pedagógicas eficazes e aumenta o risco de evasão e baixo desempenho escolar.
+A defasagem educacional é um fenômeno multifatorial, influenciado por aspectos acadêmicos, comportamentais e psicossociais.
 
-Este projeto foi desenvolvido com o objetivo de **antecipar situações de risco**, oferecendo suporte analítico à tomada de decisão pedagógica, sem substituir o olhar humano do educador.
+O objetivo deste projeto é **estimar o risco educacional de alunos antes da ocorrência de uma situação de defasagem consolidada**, utilizando indicadores pedagógicos e psicossociais.
 
----
+A aplicação busca:
 
-## 2. Objetivo do Projeto
+* identificar precocemente perfis que podem demandar acompanhamento;
+* analisar fatores associados ao risco educacional;
+* apoiar a definição de intervenções pedagógicas preventivas;
+* apresentar os resultados de forma clara e interpretável;
+* auxiliar educadores na tomada de decisão, sem substituir a avaliação humana.
 
-O objetivo principal é **estimar o risco educacional de alunos** a partir de indicadores pedagógicos e psicossociais, permitindo:
-
-- identificação precoce de perfis em risco;
-- compreensão dos fatores associados à defasagem;
-- apoio a intervenções pedagógicas preventivas;
-- maior transparência e explicabilidade do modelo.
-
-O foco do projeto está na **prevenção**, e não apenas na classificação de situações já consolidadas.
+> **Importante:** o resultado apresentado pela aplicação representa uma estimativa de risco e não deve ser interpretado como diagnóstico ou decisão pedagógica definitiva.
 
 ---
 
-## 3. Indicadores Utilizados
+## 📊 Indicadores Analisados
 
-O modelo foi treinado exclusivamente com indicadores considerados **básicos, acionáveis e anteriores à defasagem**, a saber:
+O modelo utiliza seis indicadores considerados relevantes para a análise do perfil do aluno:
 
-- **IAN** – Adequação de nível  
-- **IDA** – Desempenho acadêmico  
-- **IEG** – Engajamento  
-- **IAA** – Autoavaliação  
-- **IPS** – Aspectos psicossociais  
-- **IPV** – Ponto de virada  
+| Indicador | Descrição              |
+| --------- | ---------------------- |
+| **IAN**   | Adequação de nível     |
+| **IDA**   | Desempenho acadêmico   |
+| **IEG**   | Engajamento            |
+| **IAA**   | Autoavaliação          |
+| **IPS**   | Aspectos psicossociais |
+| **IPV**   | Ponto de virada        |
 
-Esses indicadores representam o **perfil do aluno antes da ocorrência da defasagem**, o que possibilita análises mais justas e intervenções antecipadas.
-
----
-
-## 4. Construção da Variável de Risco
-
-A variável **risco educacional** (baixo, moderado ou alto) foi construída a partir da **defasagem histórica (Defas)**, utilizada exclusivamente para **rotulagem dos dados durante o treinamento**.
-
-A defasagem **não é utilizada como variável de entrada no modelo**.
-
-Essa decisão foi tomada para evitar vazamento de informação e garantir maior validade ao aprendizado do modelo.
+Esses indicadores permitem analisar diferentes dimensões do perfil do aluno antes da ocorrência da defasagem.
 
 ---
 
-## 5. Variáveis Removidas do Treinamento
+## 🧠 Construção da Variável de Risco
 
-Algumas variáveis foram **removidas intencionalmente** do conjunto de treino para evitar que o modelo aprendesse padrões artificiais ou redundantes.
+A variável de **risco educacional** — classificada em **baixo, moderado ou alto** — foi construída a partir da variável histórica de **defasagem (`Defas`)**, utilizada exclusivamente para a criação do rótulo durante o treinamento do modelo.
 
-### Variáveis excluídas:
+A variável `Defas` **não é utilizada como variável de entrada na aplicação**.
 
-- **Defas**  
-  Base para a criação do rótulo de risco. Sua inclusão caracterizaria uso da resposta no treino.
-
-- **risco**  
-  Variável-alvo, portanto não pode ser utilizada como preditora.
-
-- **IPP** e **INDE**  
-  Índices finais e agregados, que sintetizam outros indicadores e já representam, de forma indireta, o próprio risco.
-
-A inclusão desses índices resultaria em um modelo que “antecipa” o risco utilizando informações que já o resumem, comprometendo a qualidade do aprendizado.
+Essa separação foi adotada para evitar **data leakage (vazamento de informação)** e garantir que o modelo utilize apenas informações disponíveis antes da ocorrência da situação que se deseja prever.
 
 ---
 
-## 6. Estratégia de Modelagem
+## 🔎 Seleção das Variáveis
 
-O projeto adota uma **abordagem híbrida**, composta por dois níveis complementares:
+Algumas variáveis foram removidas do conjunto utilizado no treinamento por apresentarem informações diretamente relacionadas ao resultado que o modelo deveria prever.
 
-### 6.1 Risco Estatístico (Machine Learning)
+### Variáveis excluídas
 
-- O modelo estima a **probabilidade estatística** de o aluno estar em risco.
-- A classificação é baseada na soma das probabilidades de **risco moderado** e **alto risco**.
-- Esse componente é responsável por capturar padrões históricos presentes nos dados.
+**`Defas`**
+Utilizada para construção da variável-alvo. Sua utilização como preditora resultaria em vazamento de informação.
 
-### 6.2 Risco Moderado Preventivo (Regra Pedagógica)
+**`risco`**
+Variável-alvo do modelo e, portanto, não pode ser utilizada como variável de entrada.
 
-Em situações nas quais a probabilidade estatística é baixa, mas há **concentração de indicadores em zona de atenção**, aplica-se uma regra pedagógica preventiva:
+**`IPP` e `INDE`**
+Índices agregados que sintetizam outros indicadores e poderiam fornecer ao modelo informações que já representam indiretamente o risco educacional.
 
-- Dois ou mais indicadores abaixo de 5; ou  
-- Três ou mais indicadores muito baixos (abaixo de 4,5).
-
-Nesses casos, o aluno é classificado como **Risco Moderado Preventivo**, mesmo sem evidência estatística significativa.
-
-Essa estratégia reflete a prática pedagógica real, na qual múltiplos sinais de fragilidade demandam acompanhamento, ainda que o risco não esteja plenamente configurado.
+A exclusão dessas variáveis busca evitar que o modelo simplesmente reproduza informações já consolidadas nos dados, tornando a previsão mais coerente com o objetivo de **identificação antecipada de risco**.
 
 ---
 
-## 7. Interpretação do Risco Moderado
+## 🤖 Estratégia de Modelagem
 
-O **risco moderado** não deve ser interpretado como um diagnóstico definitivo, mas como um **estado intermediário de atenção**, que pode surgir por dois motivos distintos:
+O projeto utiliza uma **abordagem híbrida**, combinando Machine Learning com regras pedagógicas preventivas.
 
-- **Estatístico**: probabilidade intermediária estimada pelo modelo;  
-- **Preventivo**: acúmulo de indicadores em zona de atenção, identificado por regra pedagógica.
+### 1. Risco Estatístico — Machine Learning
 
-Essa separação melhora a **explicabilidade**, evita contradições e fortalece o uso responsável do modelo.
+O modelo de Machine Learning estima a probabilidade de o aluno pertencer às categorias de risco.
 
----
+A classificação considera as probabilidades estimadas para **risco moderado** e **alto risco**, permitindo identificar alunos que apresentam maior probabilidade de demandar acompanhamento.
 
-## 8. Interface e Visualização
+### 2. Risco Moderado Preventivo — Regra Pedagógica
 
-A aplicação, desenvolvida em **Streamlit**, permite:
+Além da previsão estatística, foi criada uma regra complementar para identificar situações em que existe uma **concentração de indicadores em zona de atenção**, mesmo quando o modelo estatístico não aponta um risco elevado.
 
-- simulação interativa dos indicadores do aluno;
-- visualização das probabilidades estimadas;
-- identificação clara dos indicadores críticos;
-- distinção explícita entre risco estatístico e risco preventivo.
+O aluno pode ser classificado como **Risco Moderado Preventivo** quando apresenta:
 
-O foco da interface é **clareza e apoio à decisão**, e não automação da decisão pedagógica.
+* dois ou mais indicadores abaixo de **5,0**; ou
+* três ou mais indicadores abaixo de **4,5**.
 
----
-
-## 9. Tecnologias Utilizadas
-
-- Python  
-- Pandas  
-- Scikit-learn  
-- Joblib  
-- Streamlit  
+Essa abordagem busca incorporar uma perspectiva preventiva ao modelo, considerando que a presença simultânea de múltiplos sinais de fragilidade pode justificar acompanhamento mesmo quando a probabilidade estatística de risco é baixa.
 
 ---
 
-## 10. Considerações Finais
+## ⚖️ Interpretação do Risco Moderado
 
-Este projeto demonstra a aplicação de **Machine Learning de forma responsável no contexto educacional**, priorizando:
+O resultado **Risco Moderado** pode ocorrer por dois mecanismos diferentes:
 
-- prevenção em vez de reação;
-- transparência nos critérios de decisão;
-- separação entre análise estatística e julgamento pedagógico;
-- apoio ao educador, e não substituição de sua atuação.
+**Risco Moderado Estatístico**
+Resultado proveniente da probabilidade estimada pelo modelo de Machine Learning.
 
-A abordagem adotada busca equilibrar **rigor técnico**, **interpretabilidade** e **aplicabilidade prática**.
+**Risco Moderado Preventivo**
+Resultado decorrente da aplicação das regras pedagógicas, quando existe concentração de indicadores em zona de atenção.
+
+Essa distinção melhora a **transparência e explicabilidade** da aplicação e permite compreender melhor a origem da classificação apresentada.
+
+---
+
+## 🖥️ Aplicação
+
+A aplicação foi desenvolvida utilizando **Streamlit** e apresenta uma interface interativa para simulação do perfil do aluno.
+
+O usuário pode informar os valores dos seis indicadores analisados e executar a previsão.
+
+A interface apresenta:
+
+* simulador dos indicadores do aluno;
+* classificação do risco educacional;
+* probabilidades estimadas pelo modelo;
+* identificação dos indicadores em situação de atenção;
+* diferenciação entre risco estatístico e risco preventivo.
+
+A aplicação foi projetada para priorizar **clareza, interpretabilidade e apoio à decisão**, mantendo o educador como responsável pela avaliação e intervenção.
+
+### 🔗 Aplicação online
+
+**https://previsao-de-risco-educacional.streamlit.app/**
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+* **Python**
+* **Pandas**
+* **Scikit-learn**
+* **Joblib**
+* **Streamlit**
+* **Jupyter Notebook**
+
+---
+
+## 📂 Estrutura do Projeto
+
+```text
+├── app.py
+├── predictor.py
+├── codigo.ipynb
+├── modelo_treinado.pkl
+├── basededadospm.xlsx
+├── requirements.txt
+├── teste.py
+└── README.md
+```
+
+### Principais arquivos
+
+**`app.py`**
+Responsável pela interface da aplicação desenvolvida em Streamlit.
+
+**`predictor.py`**
+Responsável pela utilização do modelo para realização das previsões.
+
+**`modelo_treinado.pkl`**
+Modelo de Machine Learning treinado e utilizado pela aplicação.
+
+**`codigo.ipynb`**
+Notebook utilizado durante o processo de análise e desenvolvimento do modelo.
+
+**`basededadospm.xlsx`**
+Base de dados utilizada no projeto.
+
+**`teste.py`**
+Arquivo utilizado para testes durante o desenvolvimento.
+
+**`requirements.txt`**
+Lista de dependências necessárias para execução do projeto.
+
+---
+
+## 📌 Principais Conceitos Aplicados
+
+Este projeto reúne conceitos de:
+
+* **Análise de Dados**
+* **Machine Learning**
+* **Classificação preditiva**
+* **Engenharia e seleção de variáveis**
+* **Prevenção de data leakage**
+* **Tratamento e interpretação de dados**
+* **Modelagem preditiva**
+* **Regras de negócio**
+* **Explicabilidade de modelos**
+* **Desenvolvimento de aplicações com Streamlit**
+* **Deploy de aplicações de Data Science**
+
+---
+
+## 🌱 Considerações Finais
+
+O projeto demonstra uma aplicação prática de **Machine Learning no contexto educacional**, combinando análise estatística e conhecimento de negócio para apoiar a identificação antecipada de situações de risco.
+
+A abordagem busca equilibrar:
+
+* **rigor técnico**;
+* **prevenção**;
+* **interpretabilidade**;
+* **transparência**;
+* **aplicabilidade prática**.
+
+O modelo não tem como objetivo substituir a avaliação dos profissionais da educação, mas fornecer **informações analíticas que possam apoiar decisões e intervenções preventivas**.
